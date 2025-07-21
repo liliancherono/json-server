@@ -1,6 +1,7 @@
 const jsonServer = require('json-server');
+const path = require('path');
 const server = jsonServer.create();
-const router = jsonServer.router('db.json');
+const router = jsonServer.router(path.join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();
 const port = process.env.PORT || 8080;
 
@@ -21,10 +22,25 @@ server.options('*', (req, res) => {
 // Use default middlewares (logger, static, cors, and no-cache)
 server.use(middlewares);
 
-// Use the router
+// Add custom routes
+server.get('/goals', (req, res) => {
+  res.jsonp(router.db.get('goals').value());
+});
+
+server.get('/goals/:id', (req, res) => {
+  const goal = router.db.get('goals').find({ id: req.params.id }).value();
+  if (goal) {
+    res.jsonp(goal);
+  } else {
+    res.status(404).send('Goal not found');
+  }
+});
+
+// Use the default router
 server.use(router);
 
 // Start the server
 server.listen(port, () => {
   console.log(`JSON Server is running on port ${port}`);
 });
+gi
