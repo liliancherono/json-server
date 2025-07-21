@@ -27,7 +27,7 @@ server.get('/goals', (req, res) => {
   res.jsonp(router.db.get('goals').value());
 });
 
-server.get('/goals/:id', (req, res) => {
+server.get(`/goals/:${id}`, (req, res) => {
   const goal = router.db.get('goals').find({ id: req.params.id }).value();
   if (goal) {
     res.jsonp(goal);
